@@ -35,9 +35,12 @@ public class PlayerBehaviour : MonoBehaviour {
     {
         fanCount += 1;
         Debug.Log("FAN DODANY");
+        fansList.Add(fan);
+        fan.GetComponent<FanController>().radius = (float)(fansList.Count) / 10f + 1f;
         fan.GetComponent<FanController>().player = this.gameObject;
         fan.GetComponent<FanController>().transform.SetParent(this.transform);
-        fansList.Add(fan);
+        fan.GetComponent<Rigidbody2D>().mass = 0.1f;
+       
     }
 
     void OnTriggerEnter2D(Collider2D col)
