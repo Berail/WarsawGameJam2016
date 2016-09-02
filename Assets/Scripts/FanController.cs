@@ -11,9 +11,11 @@ public class FanController : MonoBehaviour {
     public float radius = 0f;
     Transform fanTransform;
     SpriteRenderer fanSprite;
-    
+   
+   public FlockingEnum flockingType;
     // Use this for initialization
     void Start () {
+        flockingType = FlockingEnum.No_Flocking;
         fanSprite = GetComponentInChildren<SpriteRenderer>();
         fanSprite.color = skinColors[Random.Range(0, skinColors.Count)];
         fanTransform = GetComponent<Transform>();
@@ -23,7 +25,8 @@ public class FanController : MonoBehaviour {
 	void Update () {
         if(player != null)
         {
-            movingToPlayer();
+            if (flockingType == FlockingEnum.No_Flocking)
+                movingToPlayer();
         }
         // idle dla elsa
         
@@ -48,10 +51,19 @@ public class FanController : MonoBehaviour {
         
     }
 
+    public void MoveTowards(Vector2 target)
+    {
+        Debug.Log(target + "!!!!");
+        Vector2 moving = Vector2.MoveTowards(fanTransform.localPosition, target, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
+        fanTransform.localPosition = moving;
+    }
+
     void RotatingAroundPlayer()
     {
         Quaternion q = transform.rotation;
         transform.RotateAround(player.transform.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         transform.rotation = q;
     }
+
+    
 }
