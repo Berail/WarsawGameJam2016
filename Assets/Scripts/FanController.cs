@@ -1,17 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //Aleksander
 public class FanController : MonoBehaviour {
 
+    public List<Color> skinColors;
     public GameObject player;
     public float rotationSpeed = 0f;
     public float radius = 0f;
     Transform fanTransform;
+    SpriteRenderer fanSprite;
     
     // Use this for initialization
     void Start () {
-        
+        fanSprite = GetComponentInChildren<SpriteRenderer>();
+        fanSprite.color = skinColors[Random.Range(0, skinColors.Count)];
         fanTransform = GetComponent<Transform>();
 	}
 	
@@ -47,7 +51,7 @@ public class FanController : MonoBehaviour {
     void RotatingAroundPlayer()
     {
         Quaternion q = transform.rotation;
-        transform.RotateAround(player.transform.position, Vector3.forward /2, rotationSpeed * Time.deltaTime);
+        transform.RotateAround(player.transform.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         transform.rotation = q;
     }
 }
