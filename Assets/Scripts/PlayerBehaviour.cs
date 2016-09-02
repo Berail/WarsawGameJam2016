@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 // Lukasz
 public class PlayerBehaviour : MonoBehaviour {
-
+ 
     public float speed;
     private Vector2 position;
     private Vector2 currPos;
@@ -36,6 +36,7 @@ public class PlayerBehaviour : MonoBehaviour {
         fanCount += 1;
         Debug.Log("FAN DODANY");
         fan.GetComponent<FanController>().player = this.gameObject;
+        fan.GetComponent<FanController>().transform.SetParent(this.transform);
         fansList.Add(fan);
     }
 
