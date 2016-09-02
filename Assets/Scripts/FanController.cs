@@ -32,13 +32,13 @@ public class FanController : MonoBehaviour {
 
     void movingToPlayer()
     {
-        //if (Vector2.Distance(fanTransform.position, player.transform.position) >= radius)
-        //{ 
-        //    Vector2 moving = Vector2.MoveTowards(fanTransform.position, player.transform.position, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
-        //    fanTransform.position = moving;
-        //}
-            
-            RotatingAroundPlayer();
+        if (Vector2.Distance(fanTransform.position, player.transform.position) >= radius)
+        {
+            Vector2 moving = Vector2.MoveTowards(fanTransform.position, player.transform.position, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
+            fanTransform.position = moving;
+        }
+
+        RotatingAroundPlayer();
         
         //else
         //{
