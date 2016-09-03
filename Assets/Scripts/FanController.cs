@@ -65,5 +65,11 @@ public class FanController : MonoBehaviour {
         transform.rotation = q;
     }
 
-    
+    void onTriggerColider2D(Collider2D col)
+    {
+        if(col.tag == "Fan" && col.transform.parent.name != transform.parent.name)
+        {
+            Debug.Log("TRAFIONY");
+        }
+    }
 }

@@ -9,7 +9,8 @@ public class PlayerBehaviour : MonoBehaviour {
     private Vector2 position;
     public int fanCount;
     private Vector2 Direction;
-    private List<GameObject> fansList;
+    [HideInInspector]
+    public List<GameObject> fansList;
     private bool[] BlockingMoves = new bool[4];
     FlockingEnum flockingType;
     int layerMask;
