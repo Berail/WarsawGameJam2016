@@ -17,11 +17,11 @@ public class PlayerBehaviour : MonoBehaviour {
     Rect box;
     int howManyRays = 4;
     float margin = 0.22f;
-    BoxCollider2D circleCollider;
+    PolygonCollider2D circleCollider;
     Vector3 localScalecurr;
     // Use this for initialization
     void Start() {
-        circleCollider = GetComponents<BoxCollider2D>()[0];
+        circleCollider = GetComponents<PolygonCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
         fanCount = 0;
