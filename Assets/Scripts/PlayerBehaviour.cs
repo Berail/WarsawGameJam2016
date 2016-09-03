@@ -7,21 +7,40 @@ public class PlayerBehaviour : MonoBehaviour {
  
     public float speed;
     private Vector2 position;
-    private Vector2 currPos;
     public int fanCount;
     private Vector2 Direction;
     private List<GameObject> fansList;
+    private bool[] BlockingMoves = new bool[4];
     FlockingEnum flockingType;
+    int layerMask;
+    Rect box;
+    int howManyRays = 4;
+    int margin = 1;
+    BoxCollider2D circleCollider;
     // Use this for initialization
     void Start() {
+        circleCollider = GetComponents<BoxCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 5.0f;
         fanCount = 0;
         fansList = new List<GameObject>();
+        for(int i = 0; i < 4; i++)
+        {
+            BlockingMoves[i] = true;
+        }
+        layerMask = LayerMask.NameToLayer("wallCollisions");
     }
 
     // Update is called once per frame
     void Update() {
+
+        box = new Rect(
+            circleCollider.bounds.min.x,
+            circleCollider.bounds.min.y,
+            circleCollider.bounds.size.x,
+            circleCollider.bounds.size.y
+            );
+
         Movement();
         if(Input.GetKey(KeyCode.Space))
         {
@@ -32,12 +51,82 @@ public class PlayerBehaviour : MonoBehaviour {
 
     void Movement()
     {
-            
-            currPos = transform.position;
+
+        position = transform.position;
             float xPos = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
             float yPos = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+        Vector2 startPointX = new Vector2(box.xMin + margin, box.center.y);
+        Vector2 endPointX = new Vector2(box.xMax - margin, box.center.y);
+        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin);
+        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin);
+
+        RaycastHit2D hitInfo;
+
+        float distance = (box.height / 10);
+        
         if (xPos != 0.0f || yPos != 0.0f)
         {
+
+            for (int i = 0; i < howManyRays; i++)
+            {
+                Debug.Log(i);
+                float lerAmount = (float)i / (float)howManyRays - 1;
+                Vector2 originxR = Vector2.Lerp(startPointX, endPointX, lerAmount);
+                Vector2 originyU = Vector2.Lerp(startPointY, endPointY, lerAmount);
+                Vector2 originxL = Vector2.Lerp(endPointX, startPointX, lerAmount);
+                Vector2 originyd = Vector2.Lerp(endPointY, startPointY, lerAmount);
+           
+                Debug.DrawRay(originyd, Vector2.down, Color.black);
+                hitInfo = Physics2D.Raycast(originyd, Vector2.down, distance);
+                if (hitInfo)
+                {
+                    if (hitInfo.collider.tag == "Wall")
+                    {
+                        if(yPos<0)
+                        {
+                            yPos = 0;
+                        }
+                    }
+                }
+                Debug.DrawRay(originyU, Vector2.up, Color.green);
+                hitInfo = Physics2D.Raycast(originyU, Vector2.up, distance);
+                if (hitInfo)
+                {
+                    if (hitInfo.collider.tag == "Wall")
+                    {
+                        if (yPos > 0)
+                        {
+                            yPos = 0;
+                        }
+                    }
+                }
+                Debug.DrawRay(originxL, Vector2.left, Color.blue);
+                hitInfo = Physics2D.Raycast(originxL, Vector2.left, distance);
+                if (hitInfo)
+                {
+                    if (hitInfo.collider.tag == "Wall")
+                    {
+                        if (xPos < 0)
+                        {
+                            xPos = 0;
+                        }
+                    }
+                }
+                Debug.DrawRay(originxR, Vector2.right, Color.red);
+                hitInfo = Physics2D.Raycast(originxR, Vector2.right, distance);
+                if (hitInfo)
+                {
+                    if (hitInfo.collider.tag == "Wall")
+                    {
+                        if (xPos > 0)
+                        {
+                            xPos = 0;
+                        }
+                    }
+                }
+
+            }
+
             position += new Vector2(xPos, yPos);
             Direction = new Vector2(xPos, yPos).normalized;
             transform.position = position;
