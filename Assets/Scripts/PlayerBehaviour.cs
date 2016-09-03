@@ -15,13 +15,14 @@ public class PlayerBehaviour : MonoBehaviour {
     int layerMask;
     Rect box;
     int howManyRays = 4;
-    int margin = 1;
+    float margin = 0.22f;
     BoxCollider2D circleCollider;
+    Vector3 localScalecurr;
     // Use this for initialization
     void Start() {
         circleCollider = GetComponents<BoxCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
-        speed = 5.0f;
+        speed = 1.0f;
         fanCount = 0;
         fansList = new List<GameObject>();
         for(int i = 0; i < 4; i++)
@@ -29,6 +30,7 @@ public class PlayerBehaviour : MonoBehaviour {
             BlockingMoves[i] = true;
         }
         layerMask = LayerMask.NameToLayer("wallCollisions");
+        localScalecurr = transform.GetChild(0).localScale;
     }
 
     // Update is called once per frame
@@ -57,22 +59,25 @@ public class PlayerBehaviour : MonoBehaviour {
             float yPos = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         Vector2 startPointX = new Vector2(box.xMin + margin, box.center.y);
         Vector2 endPointX = new Vector2(box.xMax - margin, box.center.y);
-        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin);
-        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin);
+        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin+0.1f);
+        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin-0.1f);
 
-
-
-        float distance = (box.height / 10);
         
+
+        float distance = 0.01f;
+        transform.GetChild(0).GetComponent<SpriteRenderer>().flipX = (xPos != 0) ? (xPos > 0) ? false :  true : false;
         if (xPos != 0.0f || yPos != 0.0f)
         {
-
+            
+            GetComponent<Animator>().SetBool("Walking", true);
             CollisionDetection(distance,ref xPos, ref yPos, startPointX, startPointY, endPointX, endPointY);
 
              position += new Vector2(xPos, yPos);
             Direction = new Vector2(xPos, yPos).normalized;
             transform.position = position;
+            return;
         }
+        GetComponent<Animator>().SetBool("Walking", false);
     }
 
     void CollisionDetection(float distance, ref float xPos, ref float yPos,Vector2 startPointX, Vector2 startPointY, Vector2 endPointX, Vector2 endPointY)

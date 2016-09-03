@@ -6,9 +6,12 @@ public class CameraFollow : MonoBehaviour {
     public float dampTime = 0.15f;
     private Vector3 velocity = Vector3.zero;
     public Transform target;
-
+    public void Awake()
+    {
+        Application.targetFrameRate = 60;
+    }
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
         if (target)
         {
