@@ -106,7 +106,7 @@ public class PlayerBehaviour : MonoBehaviour
             hitInfo = Physics2D.Raycast(originyd, Vector2.down, distance);
             if (hitInfo)
             {
-                if (hitInfo.collider.tag == "Wall")
+                if (hitInfo.collider.tag == "Wall" || (hitInfo.collider.tag == "Bridge" && hitInfo.collider.GetComponent<BridgeController>().canCross == false))
                 {
                     if (yPos < 0)
                     {
@@ -118,7 +118,7 @@ public class PlayerBehaviour : MonoBehaviour
             hitInfo = Physics2D.Raycast(originyU, Vector2.up, distance);
             if (hitInfo)
             {
-                if (hitInfo.collider.tag == "Wall")
+                if (hitInfo.collider.tag == "Wall" || (hitInfo.collider.tag == "Bridge" && hitInfo.collider.GetComponent<BridgeController>().canCross == false))
                 {
                     if (yPos > 0)
                     {
@@ -130,7 +130,7 @@ public class PlayerBehaviour : MonoBehaviour
             hitInfo = Physics2D.Raycast(originxL, Vector2.left, distance);
             if (hitInfo)
             {
-                if (hitInfo.collider.tag == "Wall")
+                if (hitInfo.collider.tag == "Wall" || (hitInfo.collider.tag == "Bridge" && hitInfo.collider.GetComponent<BridgeController>().canCross == false))
                 {
                     if (xPos < 0)
                     {
@@ -142,7 +142,7 @@ public class PlayerBehaviour : MonoBehaviour
             hitInfo = Physics2D.Raycast(originxR, Vector2.right, distance);
             if (hitInfo)
             {
-                if (hitInfo.collider.tag == "Wall")
+                if (hitInfo.collider.tag == "Wall" || (hitInfo.collider.tag == "Bridge" && hitInfo.collider.GetComponent<BridgeController>().canCross == false))
                 {
                     if (xPos > 0)
                     {
