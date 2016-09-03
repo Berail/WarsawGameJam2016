@@ -5,6 +5,7 @@ using System.Collections.Generic;
 // Lukasz
 public class PlayerBehaviour : MonoBehaviour
 {
+    public int health;
     [HideInInspector]
     public float speed;
     private Vector2 position;
@@ -41,7 +42,10 @@ public class PlayerBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        if(health <=0)
+        {
+            death();
+        }
         box = new Rect(
             BoxCollider2D.bounds.min.x,
             BoxCollider2D.bounds.min.y,
@@ -91,7 +95,7 @@ public class PlayerBehaviour : MonoBehaviour
         RaycastHit2D hitInfo;
         for (int i = 0; i < howManyRays; i++)
         {
-            Debug.Log(i);
+            
             float lerAmount = (float)i / (float)howManyRays - 1;
             Vector2 originxR = Vector2.Lerp(startPointX, endPointX, lerAmount);
             Vector2 originyU = Vector2.Lerp(startPointY, endPointY, lerAmount);
@@ -153,7 +157,7 @@ public class PlayerBehaviour : MonoBehaviour
     void FanAdding(GameObject fan)
     {
         fanCount += 1;
-        Debug.Log("FAN DODANY");
+        
         fansList.Add(fan);
         fan.GetComponent<FanController>().radius = (float)(fansList.Count) / 10f + 1f;
         fan.GetComponent<FanController>().player = this.gameObject;
@@ -170,7 +174,7 @@ public class PlayerBehaviour : MonoBehaviour
             foreach (GameObject go in fansList)
             {
                 Vector2 positions = ((Direction == Vector2.zero) ? -Vector2.left - Vector2.left * i : Direction + Direction * i);
-                Debug.Log("TARGET " + positions);
+               
                 go.GetComponent<FanController>().flockingType = flokingType;
                 go.GetComponent<FanController>().MoveTowards(positions);
                 i++;
@@ -181,35 +185,47 @@ public class PlayerBehaviour : MonoBehaviour
             int i = 0;
             foreach (GameObject go in fansList)
             {
-                Vector2 positions = (-Direction - Direction * i) / 2;
-                Debug.Log("TARGET " + positions);
-                go.GetComponent<FanController>().flockingType = flokingType;
-                go.GetComponent<FanController>().MoveTowards(positions);
-                i++;
+                if (go != null)
+                {
+                    Vector2 positions = (-Direction - Direction * i) / 2;
+
+                    go.GetComponent<FanController>().flockingType = flokingType;
+                    go.GetComponent<FanController>().MoveTowards(positions);
+                    i++;
+                }
             }
         }
 
     }
-
-
-    void removeFan(GameObject fan)
+    
+    void takeDamage(int damage)
     {
-        fansList.Remove(fan);
-        Destroy(fan);
+        health -= damage;
     }
 
+    void death()
+    {
+        if (fansList != null && fansList.Count > 0)
+        {
+            foreach (GameObject fan in fansList)
+            {
+                if (fan != null)
+                    fan.GetComponentInChildren<Transform>().SetParent(null);
+            }
+
+        }
+        Destroy(gameObject);
+    }
 
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.tag == "Fan" && !fansList.Contains(col.gameObject) && col.transform.parent == null)
             FanAdding(col.gameObject);
-        //else if (col.tag == "Fan" && !fansList.Contains(col.gameObject) && col.transform.parent != null)
-        //{
-        //    Debug.Log("HELLO");
-        //    removeFan(fansList[Random.Range(0,fansList.Count)]);
-
-        //    removeFan(col.gameObject);
-        //}
+        if (col.tag == "Fan" && col.transform.parent != null && col.transform.parent.name == "Enemy" && fansList.Count == 0)
+        {
+            takeDamage(col.GetComponent<FanController>().damageOfFan);
+        }
+            
 
     }
 
