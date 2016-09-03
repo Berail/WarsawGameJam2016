@@ -5,9 +5,10 @@ using System.Collections.Generic;
 // Lukasz
 public class PlayerBehaviour : MonoBehaviour
 {
-
+    [HideInInspector]
     public float speed;
     private Vector2 position;
+    [HideInInspector]
     public int fanCount;
     private Vector2 Direction;
     [HideInInspector]
@@ -18,17 +19,12 @@ public class PlayerBehaviour : MonoBehaviour
     Rect box;
     int howManyRays = 4;
     float margin = 0.22f;
-    PolygonCollider2D circleCollider;
+    PolygonCollider2D PolygonCollider2D;
     Vector3 localScalecurr;
     // Use this for initialization
-<<<<<<< HEAD
     void Start()
     {
-        circleCollider = GetComponents<BoxCollider2D>()[0];
-=======
-    void Start() {
-        circleCollider = GetComponents<PolygonCollider2D>()[0];
->>>>>>> origin/master
+        PolygonCollider2D = GetComponents<PolygonCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
         fanCount = 0;
@@ -46,10 +42,10 @@ public class PlayerBehaviour : MonoBehaviour
     {
 
         box = new Rect(
-            circleCollider.bounds.min.x,
-            circleCollider.bounds.min.y,
-            circleCollider.bounds.size.x,
-            circleCollider.bounds.size.y
+            PolygonCollider2D.bounds.min.x,
+            PolygonCollider2D.bounds.min.y,
+            PolygonCollider2D.bounds.size.x,
+            PolygonCollider2D.bounds.size.y
             );
 
         Movement();
@@ -200,7 +196,7 @@ public class PlayerBehaviour : MonoBehaviour
         fansList.Remove(fan);
         Destroy(fan);
     }
-    
+
 
     void OnTriggerEnter2D(Collider2D col)
     {
@@ -210,11 +206,11 @@ public class PlayerBehaviour : MonoBehaviour
         //{
         //    Debug.Log("HELLO");
         //    removeFan(fansList[Random.Range(0,fansList.Count)]);
-            
+
         //    removeFan(col.gameObject);
         //}
-            
+
     }
-    
+
 
 }
