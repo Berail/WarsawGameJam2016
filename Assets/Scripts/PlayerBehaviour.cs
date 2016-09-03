@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 
 // Lukasz
-public class PlayerBehaviour : MonoBehaviour {
- 
+public class PlayerBehaviour : MonoBehaviour
+{
+
     public float speed;
     private Vector2 position;
     public int fanCount;
@@ -20,13 +21,14 @@ public class PlayerBehaviour : MonoBehaviour {
     BoxCollider2D circleCollider;
     Vector3 localScalecurr;
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         circleCollider = GetComponents<BoxCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
         fanCount = 0;
         fansList = new List<GameObject>();
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             BlockingMoves[i] = true;
         }
@@ -35,7 +37,8 @@ public class PlayerBehaviour : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
 
         box = new Rect(
             circleCollider.bounds.min.x,
@@ -45,7 +48,7 @@ public class PlayerBehaviour : MonoBehaviour {
             );
 
         Movement();
-        if(Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
         {
             flockingType = FlockingEnum.Line;
         }
@@ -56,24 +59,24 @@ public class PlayerBehaviour : MonoBehaviour {
     {
 
         position = transform.position;
-            float xPos = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
-            float yPos = Input.GetAxis("Vertical") * speed * Time.deltaTime;
+        float xPos = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
+        float yPos = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         Vector2 startPointX = new Vector2(box.xMin + margin, box.center.y);
         Vector2 endPointX = new Vector2(box.xMax - margin, box.center.y);
-        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin+0.1f);
-        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin-0.1f);
+        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin + 0.1f);
+        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin - 0.1f);
 
-        
+
 
         float distance = 0.01f;
-        transform.GetChild(0).GetComponent<SpriteRenderer>().flipX = (xPos != 0) ? (xPos > 0) ? false :  true : false;
+        transform.GetChild(0).GetComponent<SpriteRenderer>().flipX = (xPos != 0) ? (xPos > 0) ? false : true : false;
         if (xPos != 0.0f || yPos != 0.0f)
         {
-            
-            GetComponent<Animator>().SetBool("Walking", true);
-            CollisionDetection(distance,ref xPos, ref yPos, startPointX, startPointY, endPointX, endPointY);
 
-             position += new Vector2(xPos, yPos);
+            GetComponent<Animator>().SetBool("Walking", true);
+            CollisionDetection(distance, ref xPos, ref yPos, startPointX, startPointY, endPointX, endPointY);
+
+            position += new Vector2(xPos, yPos);
             Direction = new Vector2(xPos, yPos).normalized;
             transform.position = position;
             return;
@@ -81,7 +84,7 @@ public class PlayerBehaviour : MonoBehaviour {
         GetComponent<Animator>().SetBool("Walking", false);
     }
 
-    void CollisionDetection(float distance, ref float xPos, ref float yPos,Vector2 startPointX, Vector2 startPointY, Vector2 endPointX, Vector2 endPointY)
+    void CollisionDetection(float distance, ref float xPos, ref float yPos, Vector2 startPointX, Vector2 startPointY, Vector2 endPointX, Vector2 endPointY)
     {
         RaycastHit2D hitInfo;
         for (int i = 0; i < howManyRays; i++)
@@ -154,28 +157,59 @@ public class PlayerBehaviour : MonoBehaviour {
         fan.GetComponent<FanController>().player = this.gameObject;
         fan.GetComponent<FanController>().transform.SetParent(this.transform);
         fan.GetComponent<Rigidbody2D>().mass = 0.1f;
-       
+
     }
 
     void Flocking(FlockingEnum flokingType)
     {
-        if (flokingType == FlockingEnum.Line) { 
-        int i = 0;
-        foreach (GameObject go in fansList)
+        if (flokingType == FlockingEnum.Line)
         {
-               Vector2 positions = ((Direction == Vector2.zero) ? -Vector2.left - Vector2.left*i : Direction + Direction * i);
+            int i = 0;
+            foreach (GameObject go in fansList)
+            {
+                Vector2 positions = ((Direction == Vector2.zero) ? -Vector2.left - Vector2.left * i : Direction + Direction * i);
                 Debug.Log("TARGET " + positions);
                 go.GetComponent<FanController>().flockingType = flokingType;
                 go.GetComponent<FanController>().MoveTowards(positions);
                 i++;
+            }
         }
+        else if (flockingType == FlockingEnum.No_Flocking)
+        {
+            int i = 0;
+            foreach (GameObject go in fansList)
+            {
+                Vector2 positions = (-Direction - Direction * i) / 2;
+                Debug.Log("TARGET " + positions);
+                go.GetComponent<FanController>().flockingType = flokingType;
+                go.GetComponent<FanController>().MoveTowards(positions);
+                i++;
+            }
+        }
+
     }
+
+
+    void removeFan(GameObject fan)
+    {
+        fansList.Remove(fan);
+        Destroy(fan);
     }
+    
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "Fan" && !fansList.Contains(col.gameObject))
+        if (col.tag == "Fan" && !fansList.Contains(col.gameObject) && col.transform.parent == null)
             FanAdding(col.gameObject);
+        //else if (col.tag == "Fan" && !fansList.Contains(col.gameObject) && col.transform.parent != null)
+        //{
+        //    Debug.Log("HELLO");
+        //    removeFan(fansList[Random.Range(0,fansList.Count)]);
+            
+        //    removeFan(col.gameObject);
+        //}
+            
     }
+    
 
 }

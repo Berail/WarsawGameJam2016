@@ -7,8 +7,11 @@ public class FanController : MonoBehaviour {
 
     public List<Color> skinColors;
     public GameObject player;
+    public int healh;
+    public int damageOfFan;
     public float rotationSpeed = 0f;
     public float radius = 0f;
+
     Transform fanTransform;
     SpriteRenderer fanSprite;
    
@@ -37,11 +40,12 @@ public class FanController : MonoBehaviour {
     {
         if (Vector2.Distance(fanTransform.position, player.transform.position) >= radius)
         {
+            
             Vector2 moving = Vector2.MoveTowards(fanTransform.position, player.transform.position, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
             fanTransform.position = moving;
         }
 
-        RotatingAroundPlayer();
+        //RotatingAroundPlayer();
         
         //else
         //{
@@ -53,6 +57,7 @@ public class FanController : MonoBehaviour {
 
     public void MoveTowards(Vector2 target)
     {
+        
         Debug.Log(target + "!!!!");
         Vector2 moving = Vector2.MoveTowards(fanTransform.localPosition, target, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
         fanTransform.localPosition = moving;
@@ -64,12 +69,25 @@ public class FanController : MonoBehaviour {
         transform.RotateAround(player.transform.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         transform.rotation = q;
     }
-
-    void onTriggerColider2D(Collider2D col)
+    public void TakeDamage()
     {
-        if(col.tag == "Fan" && col.transform.parent.name != transform.parent.name)
-        {
-            Debug.Log("TRAFIONY");
-        }
+        healh -= damageOfFan;
+        
+        //Animation
     }
+    void death()
+    {
+            Destroy(gameObject);
+            //Animation
+    }
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        if (col.tag == "Fan" && col.transform.parent != null && transform.parent != null && col.transform.parent.name != transform.parent.name)
+        {
+            TakeDamage();
+            col.gameObject.GetComponent<FanController>().TakeDamage();
+            if (healh <= 0)
+                death();
+        }
+   }
 }

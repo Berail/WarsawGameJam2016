@@ -10,7 +10,8 @@ public class EnemyController : MonoBehaviour {
     public float distanceToPlayer;
     private Vector2 position;
     GameObject nearestFan;
-    private List<GameObject> EnemyFansList;
+    [HideInInspector]
+    public List<GameObject> EnemyFansList;
     private CircleCollider2D circleCollider2D;
 
     Vector2 moving;
@@ -27,20 +28,23 @@ public class EnemyController : MonoBehaviour {
         {
             
             findNearst();
-            if (nearestFan == null || 
+            if (nearestFan == null ||
                 Vector2.Distance(transform.position, player.transform.position) < Vector2.Distance(transform.position, nearestFan.transform.position))
             {
-                if((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) < 3 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
+                if ((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) <= 2 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
                     moving = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
                 Debug.Log(distanceToPlayer);
-                
-                if(Vector2.Distance(transform.position, player.transform.position) <= distanceToPlayer)
+
+                if (Vector2.Distance(transform.position, player.transform.position) <= distanceToPlayer)
                 {
 
                     attackPlayer();
+
                 }
             }
-            else
+            else if (EnemyFansList.Count == 0 || nearestFan != null ||
+                Vector2.Distance(transform.position, player.transform.position) > Vector2.Distance(transform.position, nearestFan.transform.position))
+
                 moving = Vector2.MoveTowards(transform.position, nearestFan.transform.position, speed * Time.deltaTime);
             
             transform.position = moving;
@@ -93,7 +97,19 @@ public class EnemyController : MonoBehaviour {
     void attackPlayer()
     {
         //sprawdza czy jego fanki triggeruja fanki playera jak tak to usun swoja i jego
-        
+        if(player.GetComponent<PlayerBehaviour>().fansList != null)
+        {
+            Debug.Log("ATTACK");
+            List<GameObject> playerFanList = player.GetComponent<PlayerBehaviour>().fansList;
+            foreach (GameObject EnemyFan in EnemyFansList)
+            {
+                Vector2 moving = Vector2.MoveTowards(EnemyFan.transform.position, playerFanList[Random.Range(0,playerFanList.Count)].transform.position, Time.deltaTime);
+                EnemyFan.transform.position = moving;
+                
+            }
+            
+           
+        }
 
     }
 }
