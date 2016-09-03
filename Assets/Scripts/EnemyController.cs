@@ -8,11 +8,14 @@ public class EnemyController : MonoBehaviour {
     public GameObject player;
     public float speed;
     public float distanceToPlayer;
+    public int health;
+    public int damageToHit;
     private Vector2 position;
     GameObject nearestFan;
     [HideInInspector]
     public List<GameObject> EnemyFansList;
     private CircleCollider2D circleCollider2D;
+    float duration = 5f;
 
     Vector2 moving;
     // Use this for initialization
@@ -24,32 +27,38 @@ public class EnemyController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(FansOnMap != null)
+        if (health < 0)
+        {
+            death();
+        }
+        if (FansOnMap != null)
         {
             
             findNearst();
             if (nearestFan == null ||
                 Vector2.Distance(transform.position, player.transform.position) < Vector2.Distance(transform.position, nearestFan.transform.position))
             {
-                if ((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) <= 2 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
+                if ((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) <= 10 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
                     moving = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-                Debug.Log(distanceToPlayer);
+                    // moving to player tu pewnie tez nie ma raycastow
 
-                if (Vector2.Distance(transform.position, player.transform.position) <= distanceToPlayer)
-                {
-
+                if (Vector2.Distance(transform.position, player.transform.position) <= distanceToPlayer  )
                     attackPlayer();
-
-                }
+                    
+                
+                
             }
-            else if (EnemyFansList.Count == 0 || nearestFan != null ||
+            else if ( nearestFan != null &&
                 Vector2.Distance(transform.position, player.transform.position) > Vector2.Distance(transform.position, nearestFan.transform.position))
-
+            {
                 moving = Vector2.MoveTowards(transform.position, nearestFan.transform.position, speed * Time.deltaTime);
+                //moving to fan Przechodzi przez sciany
+            }
+                
             
             transform.position = moving;
         }
-       
+        
 
     }
 
@@ -59,15 +68,18 @@ public class EnemyController : MonoBehaviour {
         float minDist = Mathf.Infinity;
         foreach (GameObject fan in FansOnMap)
         {
-            if (fan.transform.parent == null || fan.transform.parent.tag != "Player")
-           {
-                float dist = Vector2.Distance(transform.position, fan.transform.position);
-                if (dist < minDist)
+            if (fan != null)
+            {
+                if (fan.transform.parent == null || fan.transform.parent.tag != "Player")
                 {
-                    nearestFan = fan;
-                    minDist = dist;
-                }
+                    float dist = Vector2.Distance(transform.position, fan.transform.position);
+                    if (dist < minDist)
+                    {
+                        nearestFan = fan;
+                        minDist = dist;
+                    }
 
+                }
             }
         }
     }
@@ -85,31 +97,72 @@ public class EnemyController : MonoBehaviour {
         nearestFan = null;
     }
 
+    void takeDamage(int damage)
+    {
+        health -= damage;
+    }
+
+    void death()
+    {
+        Debug.Log("Death");
+        if(EnemyFansList != null && EnemyFansList.Count > 0)
+        {
+            foreach(GameObject fan in EnemyFansList)
+            {
+                if(fan != null)
+                fan.GetComponentInChildren<Transform>().SetParent(null);
+            }
+            
+        }
+        Destroy(gameObject);
+    }
+    
     void OnTriggerEnter2D(Collider2D col)
     {
         if (col.tag == "Fan" && !EnemyFansList.Contains(col.gameObject) && col.gameObject.transform.parent == null)
         {
             addFan(col.gameObject);
         }
+        else if(col.tag == "Fan" && col.transform.parent != null && col.transform.parent.name == "Player")
+        {
+            takeDamage(col.GetComponent<FanController>().damageOfFan);
+            col.GetComponent<FanController>().TakeDamage(damageToHit);
+        }
         
    }
-
+    
     void attackPlayer()
     {
-        //sprawdza czy jego fanki triggeruja fanki playera jak tak to usun swoja i jego
-        if(player.GetComponent<PlayerBehaviour>().fansList != null)
+        
+        if(player.GetComponent<PlayerBehaviour>().fansList.Count > 0)
         {
-            Debug.Log("ATTACK");
+            
+            int random;
             List<GameObject> playerFanList = player.GetComponent<PlayerBehaviour>().fansList;
+            Vector2 moving;
             foreach (GameObject EnemyFan in EnemyFansList)
             {
-                Vector2 moving = Vector2.MoveTowards(EnemyFan.transform.position, playerFanList[Random.Range(0,playerFanList.Count)].transform.position, Time.deltaTime);
-                EnemyFan.transform.position = moving;
-                
+                if (EnemyFan != null)
+                {
+                    
+                    random = Random.Range(0, playerFanList.Count);
+
+                    if (Vector2.Distance(EnemyFan.transform.position, playerFanList[random].transform.position) > 0.2f)
+                    {
+                        moving = Vector2.MoveTowards(EnemyFan.transform.position, playerFanList[random].transform.position, Time.deltaTime);
+                        EnemyFan.transform.position = moving;
+                    }     
+                }
             }
-            
-           
+        }
+        else
+        {
+            GameObject EnemyFan = EnemyFansList[Random.Range(0, EnemyFansList.Count)];
+            moving = Vector2.MoveTowards(EnemyFan.transform.position, player.transform.position, Time.deltaTime);
+            EnemyFan.transform.position = moving;
         }
 
     }
 }
+
+

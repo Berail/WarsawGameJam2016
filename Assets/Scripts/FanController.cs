@@ -12,6 +12,7 @@ public class FanController : MonoBehaviour {
     public float rotationSpeed = 0f;
     public float radius = 0f;
 
+    bool damageTaken = false;
     Transform fanTransform;
     SpriteRenderer fanSprite;
    
@@ -26,7 +27,9 @@ public class FanController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(player != null)
+        if (healh <= 0)
+            death();
+        if (player != null)
         {
             if (flockingType == FlockingEnum.No_Flocking)
                 movingToPlayer();
@@ -36,15 +39,19 @@ public class FanController : MonoBehaviour {
 
 	}
 
+   
+
     void movingToPlayer()
     {
-        if (Vector2.Distance(fanTransform.position, player.transform.position) >= radius)
+        if (player != null)
         {
-            
-            Vector2 moving = Vector2.MoveTowards(fanTransform.position, player.transform.position, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
-            fanTransform.position = moving;
-        }
+            if (Vector2.Distance(fanTransform.position, player.transform.position) >= radius)
+            {
 
+                Vector2 moving = Vector2.MoveTowards(fanTransform.position, player.transform.position, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
+                fanTransform.position = moving;
+            }
+        }
         //RotatingAroundPlayer();
         
         //else
@@ -58,7 +65,7 @@ public class FanController : MonoBehaviour {
     public void MoveTowards(Vector2 target)
     {
         
-        Debug.Log(target + "!!!!");
+        
         Vector2 moving = Vector2.MoveTowards(fanTransform.localPosition, target, player.GetComponent<PlayerBehaviour>().speed * Time.deltaTime);
         fanTransform.localPosition = moving;
     }
@@ -69,25 +76,47 @@ public class FanController : MonoBehaviour {
         transform.RotateAround(player.transform.position, Vector3.forward, rotationSpeed * Time.deltaTime);
         transform.rotation = q;
     }
-    public void TakeDamage()
+    public void TakeDamage(int damage)
     {
-        healh -= damageOfFan;
+        healh -= damage;
         
         //Animation
     }
+
     void death()
     {
-            Destroy(gameObject);
-            //Animation
+        //Animation
+        
+        if(transform.parent.name == "Enemy")
+        {
+            transform.parent.GetComponent<EnemyController>().EnemyFansList.Remove(gameObject);
+        }
+        else if(transform.parent.name == "Player")
+        {
+            transform.parent.GetComponent<PlayerBehaviour>().fansList.Remove(gameObject);
+        }
+        transform.SetParent(null);
+        Destroy(gameObject);
+            
     }
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "Fan" && col.transform.parent != null && transform.parent != null && col.transform.parent.name != transform.parent.name)
+        if (col.tag == "Fan" && col.transform.parent != null && transform.parent != null && col.transform.parent.name != transform.parent.name )
         {
-            TakeDamage();
-            col.gameObject.GetComponent<FanController>().TakeDamage();
-            if (healh <= 0)
-                death();
+            TakeDamage(damageOfFan);
+            col.gameObject.GetComponent<FanController>().TakeDamage(damageOfFan);
+            
+            
+        }
+        if(col.tag == "Enemy" && transform.parent != null && transform.parent.name == "Player")
+        {
+            Vector2 moving;
+            if(Vector2.Distance(col.transform.position,transform.position) > 0.3f)
+            {
+                moving = Vector2.MoveTowards(transform.position, col.transform.position, Time.deltaTime);
+                transform.position = moving;
+            }
         }
    }
+    
 }
