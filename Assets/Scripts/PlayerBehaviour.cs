@@ -18,12 +18,17 @@ public class PlayerBehaviour : MonoBehaviour
     Rect box;
     int howManyRays = 4;
     float margin = 0.22f;
-    BoxCollider2D circleCollider;
+    PolygonCollider2D circleCollider;
     Vector3 localScalecurr;
     // Use this for initialization
+<<<<<<< HEAD
     void Start()
     {
         circleCollider = GetComponents<BoxCollider2D>()[0];
+=======
+    void Start() {
+        circleCollider = GetComponents<PolygonCollider2D>()[0];
+>>>>>>> origin/master
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
         fanCount = 0;
