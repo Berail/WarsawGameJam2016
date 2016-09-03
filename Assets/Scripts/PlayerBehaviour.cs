@@ -19,12 +19,12 @@ public class PlayerBehaviour : MonoBehaviour
     Rect box;
     int howManyRays = 4;
     float margin = 0.22f;
-    PolygonCollider2D PolygonCollider2D;
+    BoxCollider2D BoxCollider2D;
     Vector3 localScalecurr;
     // Use this for initialization
     void Start()
     {
-        PolygonCollider2D = GetComponents<PolygonCollider2D>()[0];
+        BoxCollider2D = GetComponents<BoxCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
         fanCount = 0;
@@ -35,6 +35,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         layerMask = LayerMask.NameToLayer("wallCollisions");
         localScalecurr = transform.GetChild(0).localScale;
+        margin *= localScalecurr.x;
     }
 
     // Update is called once per frame
@@ -42,10 +43,10 @@ public class PlayerBehaviour : MonoBehaviour
     {
 
         box = new Rect(
-            PolygonCollider2D.bounds.min.x,
-            PolygonCollider2D.bounds.min.y,
-            PolygonCollider2D.bounds.size.x,
-            PolygonCollider2D.bounds.size.y
+            BoxCollider2D.bounds.min.x,
+            BoxCollider2D.bounds.min.y,
+            BoxCollider2D.bounds.size.x * localScalecurr.x,
+            BoxCollider2D.bounds.size.y * localScalecurr.y
             );
 
         Movement();
@@ -64,8 +65,8 @@ public class PlayerBehaviour : MonoBehaviour
         float yPos = Input.GetAxis("Vertical") * speed * Time.deltaTime;
         Vector2 startPointX = new Vector2(box.xMin + margin, box.center.y);
         Vector2 endPointX = new Vector2(box.xMax - margin, box.center.y);
-        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin + 0.1f);
-        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin - 0.1f);
+        Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin + 0.2f);
+        Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin - 0.4f);
 
 
 

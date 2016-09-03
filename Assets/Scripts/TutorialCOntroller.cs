@@ -16,11 +16,13 @@ public class TutorialCOntroller : MonoBehaviour {
         DT = Tips[count].GetComponentsInChildren<DOTweenAnimation>();
         Debug.Log("DUPA");
         Debug.Log("!!!" + DT.Length);
+        float timer = 0;
         // suspend execution for 5 seconds
      
         foreach (DOTweenAnimation d in DT)
         {
             d.DOPlay();
+            timer = d.duration;
         }
         
         count++;
@@ -37,7 +39,7 @@ public class TutorialCOntroller : MonoBehaviour {
         }
         Debug.Log("DUPA2" + " !");
         DT = null;
-        Invoke("ShowAndFade", 8);
+        Invoke("ShowAndFade", timer + 3);
     }
     void Start()
     {
