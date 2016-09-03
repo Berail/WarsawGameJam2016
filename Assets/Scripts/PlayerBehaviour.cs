@@ -60,76 +60,82 @@ public class PlayerBehaviour : MonoBehaviour {
         Vector2 startPointY = new Vector2(box.center.x, box.yMin + margin);
         Vector2 endPointY = new Vector2(box.center.x, box.yMax - margin);
 
-        RaycastHit2D hitInfo;
+
 
         float distance = (box.height / 10);
         
         if (xPos != 0.0f || yPos != 0.0f)
         {
 
-            for (int i = 0; i < howManyRays; i++)
-            {
-                Debug.Log(i);
-                float lerAmount = (float)i / (float)howManyRays - 1;
-                Vector2 originxR = Vector2.Lerp(startPointX, endPointX, lerAmount);
-                Vector2 originyU = Vector2.Lerp(startPointY, endPointY, lerAmount);
-                Vector2 originxL = Vector2.Lerp(endPointX, startPointX, lerAmount);
-                Vector2 originyd = Vector2.Lerp(endPointY, startPointY, lerAmount);
-           
-                Debug.DrawRay(originyd, Vector2.down, Color.black);
-                hitInfo = Physics2D.Raycast(originyd, Vector2.down, distance);
-                if (hitInfo)
-                {
-                    if (hitInfo.collider.tag == "Wall")
-                    {
-                        if(yPos<0)
-                        {
-                            yPos = 0;
-                        }
-                    }
-                }
-                Debug.DrawRay(originyU, Vector2.up, Color.green);
-                hitInfo = Physics2D.Raycast(originyU, Vector2.up, distance);
-                if (hitInfo)
-                {
-                    if (hitInfo.collider.tag == "Wall")
-                    {
-                        if (yPos > 0)
-                        {
-                            yPos = 0;
-                        }
-                    }
-                }
-                Debug.DrawRay(originxL, Vector2.left, Color.blue);
-                hitInfo = Physics2D.Raycast(originxL, Vector2.left, distance);
-                if (hitInfo)
-                {
-                    if (hitInfo.collider.tag == "Wall")
-                    {
-                        if (xPos < 0)
-                        {
-                            xPos = 0;
-                        }
-                    }
-                }
-                Debug.DrawRay(originxR, Vector2.right, Color.red);
-                hitInfo = Physics2D.Raycast(originxR, Vector2.right, distance);
-                if (hitInfo)
-                {
-                    if (hitInfo.collider.tag == "Wall")
-                    {
-                        if (xPos > 0)
-                        {
-                            xPos = 0;
-                        }
-                    }
-                }
+            CollisionDetection(distance,ref xPos, ref yPos, startPointX, startPointY, endPointX, endPointY);
 
-            }
-
-            position += new Vector2(xPos, yPos);
+             position += new Vector2(xPos, yPos);
             Direction = new Vector2(xPos, yPos).normalized;
             transform.position = position;
+        }
+    }
+
+    void CollisionDetection(float distance, ref float xPos, ref float yPos,Vector2 startPointX, Vector2 startPointY, Vector2 endPointX, Vector2 endPointY)
+    {
+        RaycastHit2D hitInfo;
+        for (int i = 0; i < howManyRays; i++)
+        {
+            Debug.Log(i);
+            float lerAmount = (float)i / (float)howManyRays - 1;
+            Vector2 originxR = Vector2.Lerp(startPointX, endPointX, lerAmount);
+            Vector2 originyU = Vector2.Lerp(startPointY, endPointY, lerAmount);
+            Vector2 originxL = Vector2.Lerp(endPointX, startPointX, lerAmount);
+            Vector2 originyd = Vector2.Lerp(endPointY, startPointY, lerAmount);
+
+            Debug.DrawRay(originyd, Vector2.down, Color.black);
+            hitInfo = Physics2D.Raycast(originyd, Vector2.down, distance);
+            if (hitInfo)
+            {
+                if (hitInfo.collider.tag == "Wall")
+                {
+                    if (yPos < 0)
+                    {
+                        yPos = 0;
+                    }
+                }
+            }
+            Debug.DrawRay(originyU, Vector2.up, Color.green);
+            hitInfo = Physics2D.Raycast(originyU, Vector2.up, distance);
+            if (hitInfo)
+            {
+                if (hitInfo.collider.tag == "Wall")
+                {
+                    if (yPos > 0)
+                    {
+                        yPos = 0;
+                    }
+                }
+            }
+            Debug.DrawRay(originxL, Vector2.left, Color.blue);
+            hitInfo = Physics2D.Raycast(originxL, Vector2.left, distance);
+            if (hitInfo)
+            {
+                if (hitInfo.collider.tag == "Wall")
+                {
+                    if (xPos < 0)
+                    {
+                        xPos = 0;
+                    }
+                }
+            }
+            Debug.DrawRay(originxR, Vector2.right, Color.red);
+            hitInfo = Physics2D.Raycast(originxR, Vector2.right, distance);
+            if (hitInfo)
+            {
+                if (hitInfo.collider.tag == "Wall")
+                {
+                    if (xPos > 0)
+                    {
+                        xPos = 0;
+                    }
+                }
+            }
+
         }
     }
 
