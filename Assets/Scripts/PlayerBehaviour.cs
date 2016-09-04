@@ -2,6 +2,7 @@
 using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 // Lukasz
 public class PlayerBehaviour : MonoBehaviour
@@ -25,7 +26,17 @@ public class PlayerBehaviour : MonoBehaviour
     BoxCollider2D BoxCollider2D;
     Vector3 localScalecurr;
     
-
+    void Awake()
+    {
+        if(!PlayerPrefs.HasKey("HighScore"))
+        {
+            PlayerPrefs.SetInt("HighScore", 0);
+        }
+    }
+    void OnApplicationQuit()
+    {
+        PlayerPrefs.SetInt("HighScore", 0);
+    }
     // Use this for initialization
     void Start()
     {
@@ -59,7 +70,8 @@ public class PlayerBehaviour : MonoBehaviour
             );
 
         Movement();
-      
+
+        Flocking(flockingType);
     }
 
     void Movement()
@@ -164,6 +176,9 @@ public class PlayerBehaviour : MonoBehaviour
         fan.GetComponent<FanController>().player = this.gameObject;
         fan.GetComponent<FanController>().transform.SetParent(this.transform);
         fan.GetComponent<Rigidbody2D>().mass = 0.1f;
+        fan.GetComponent<AudioSource>().pitch = fan.GetComponent<AudioSource>().pitch + Random.Range(-0.1f, 0.1f);
+        fan.GetComponent<AudioSource>().Play();
+        fan.GetComponent<FanController>().hearth.GetComponent<DOTweenAnimation>().DOPlay();
 
     }
 

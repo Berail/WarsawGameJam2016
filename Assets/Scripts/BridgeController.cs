@@ -24,7 +24,7 @@ public class BridgeController : MonoBehaviour
 
         if (player != null )
         {
-            
+           
                 if (HowManyFansSacrifice < HowManyFansCost)
                 {
                     foreach (GameObject fan in player.GetComponent<PlayerBehaviour>().fansList) // wyskakuje blad 
@@ -61,6 +61,14 @@ public class BridgeController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        if (col.tag == "Player")
+        {
+            for(int i = 0; i < 2; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(true);
+            }
+            GetComponentInChildren<TextMesh>().text = "x " + (HowManyFansCost - HowManyFansSacrifice).ToString();
+        }
         if (col.tag == "Player" && col.GetComponent<PlayerBehaviour>().fanCount >= HowManyFansCost )
         {
             player = col.gameObject;
@@ -74,6 +82,18 @@ public class BridgeController : MonoBehaviour
 
 
 
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.tag == "Player")
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                transform.GetChild(i).gameObject.SetActive(false);
+            }
+            GetComponentInChildren<TextMesh>().text = "x " + (HowManyFansCost - HowManyFansSacrifice).ToString();
+        }
     }
 
     

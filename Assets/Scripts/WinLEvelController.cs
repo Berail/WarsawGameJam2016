@@ -7,11 +7,10 @@ public class WinLEvelController : MonoBehaviour {
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("IM IN");
         if(col.tag == "ExitPoint")
         {
-            Debug.Log("DEEPER");
-            if(currentScene == SceneManager.sceneCountInBuildSettings-1)
+            PlayerPrefs.SetInt("HighScore", PlayerPrefs.GetInt("HighScore") + GetComponent<PlayerBehaviour>().fanCount);
+            if (currentScene == SceneManager.sceneCountInBuildSettings-1)
             {
                 Debug.Log("BU 0");
                 currentScene = 0;
@@ -19,7 +18,6 @@ public class WinLEvelController : MonoBehaviour {
             }
             else
             {
-                Debug.Log("YA more");
                 currentScene++;
                 SceneManager.LoadScene(currentScene);
             }

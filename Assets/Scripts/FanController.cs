@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 
 //Aleksander
 public class FanController : MonoBehaviour {
@@ -11,6 +12,7 @@ public class FanController : MonoBehaviour {
     public int damageOfFan;
     public float rotationSpeed = 0f;
     public float radius = 0f;
+    public GameObject hearth;
 
     bool damageTaken = false;
     Transform fanTransform;
@@ -31,6 +33,9 @@ public class FanController : MonoBehaviour {
             death();
         if (player != null)
         {
+            
+                
+            
             if (flockingType == FlockingEnum.No_Flocking)
                 movingToPlayer();
         }
