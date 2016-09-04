@@ -235,6 +235,10 @@ public class PlayerBehaviour : MonoBehaviour
         {
             takeDamage(col.GetComponent<EnemyController>().damageToHit);
         }
+        if(fansList.Count == 0 && col.transform.parent != null && col.transform.parent.name == "Enemy")
+        {
+            takeDamage(col.GetComponent<FanController>().damageOfFan);
+        }
 
     }
 
