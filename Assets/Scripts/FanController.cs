@@ -108,13 +108,7 @@ public class FanController : MonoBehaviour {
     }
     void OnTriggerEnter2D(Collider2D col)
     {
-        if (col.tag == "Fan" && col.transform.parent != null && transform.parent != null && col.transform.parent.name != transform.parent.name )
-        {
-            TakeDamage(damageOfFan);
-            col.gameObject.GetComponent<FanController>().TakeDamage(damageOfFan);
-            
-            
-        }
+        
         if(col.tag == "Enemy" && transform.parent != null && transform.parent.name == "Player")
         {
             Vector2 moving;
@@ -125,5 +119,15 @@ public class FanController : MonoBehaviour {
             }
         }
    }
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.tag == "Fan" && col.transform.parent != null && transform.parent != null && col.transform.parent.name != transform.parent.name)
+        {
+            TakeDamage(damageOfFan);
+            col.gameObject.GetComponent<FanController>().TakeDamage(damageOfFan);
+
+
+        }
+    }
     
 }
