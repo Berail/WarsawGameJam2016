@@ -16,7 +16,8 @@ public class EnemyController : MonoBehaviour {
     public List<GameObject> EnemyFansList;
     private CircleCollider2D circleCollider2D;
     float duration = 5f;
-
+    [HideInInspector]
+    public bool playerInRange = false;
     Vector2 moving;
     // Use this for initialization
     void Start () {
@@ -38,12 +39,18 @@ public class EnemyController : MonoBehaviour {
             if (nearestFan == null ||
                 Vector2.Distance(transform.position, player.transform.position) < Vector2.Distance(transform.position, nearestFan.transform.position))
             {
-                if ((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) <= 10 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
-                    moving = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
-                    // moving to player tu pewnie tez nie ma raycastow
+                
+                if(playerInRange)
+                {
+                    moveToPlayer();
+                }
 
                 if (Vector2.Distance(transform.position, player.transform.position) <= distanceToPlayer  )
+                {
+                    
                     attackPlayer();
+                }
+                    
                     
                 
                 
@@ -57,9 +64,23 @@ public class EnemyController : MonoBehaviour {
                 
             
             transform.position = moving;
+           
         }
         
 
+    }
+
+    void moveToPlayer()
+    {
+        
+
+        //W STRONE PLAYERA
+        if ((player.GetComponent<PlayerBehaviour>().fanCount - EnemyFansList.Count) <= 10 && Vector2.Distance(transform.position, player.transform.position) > distanceToPlayer)
+        {
+            moving = Vector2.MoveTowards(transform.position, player.transform.position, speed * Time.deltaTime);
+            // moving to player tu pewnie tez nie ma raycastow
+        }
+        transform.position = moving;
     }
 
     void findNearst()
@@ -155,12 +176,7 @@ public class EnemyController : MonoBehaviour {
                 }
             }
         }
-        else
-        {
-            GameObject EnemyFan = EnemyFansList[Random.Range(0, EnemyFansList.Count)];
-            moving = Vector2.MoveTowards(EnemyFan.transform.position, player.transform.position, Time.deltaTime);
-            EnemyFan.transform.position = moving;
-        }
+        
 
     }
 }

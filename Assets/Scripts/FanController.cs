@@ -83,7 +83,7 @@ public class FanController : MonoBehaviour {
         //Animation
     }
 
-    void death()
+    public void death()
     {
         //Animation
         
@@ -93,7 +93,9 @@ public class FanController : MonoBehaviour {
         }
         else if(transform.parent.name == "Player")
         {
+            transform.parent.GetComponent<PlayerBehaviour>().fanCount--;
             transform.parent.GetComponent<PlayerBehaviour>().fansList.Remove(gameObject);
+
         }
         transform.SetParent(null);
         Destroy(gameObject);

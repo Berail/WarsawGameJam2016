@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -22,6 +23,8 @@ public class PlayerBehaviour : MonoBehaviour
     float margin = 0.22f;
     BoxCollider2D BoxCollider2D;
     Vector3 localScalecurr;
+    
+
     // Use this for initialization
     void Start()
     {
@@ -188,7 +191,7 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 if (go != null)
                 {
-                    Vector2 positions = (-Direction - Direction * i) / 2;
+                    Vector2 positions = (-Direction - Direction * i) / 4;
 
                     go.GetComponent<FanController>().flockingType = flokingType;
                     go.GetComponent<FanController>().MoveTowards(positions);
@@ -216,6 +219,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         }
         Destroy(gameObject);
+        int scene = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadScene(scene, LoadSceneMode.Single);
     }
 
     void OnTriggerEnter2D(Collider2D col)
@@ -226,9 +231,18 @@ public class PlayerBehaviour : MonoBehaviour
         {
             takeDamage(col.GetComponent<FanController>().damageOfFan);
         }
-            
+        if (fansList.Count == 0 && col.tag == "Enemy")
+        {
+            takeDamage(col.GetComponent<EnemyController>().damageToHit);
+        }
 
     }
 
+    public void sacrificeFan(GameObject fan)
+    {
+        
+        fansList.Remove(fan);
+        fan.GetComponent<FanController>().death();
+    }
 
 }
