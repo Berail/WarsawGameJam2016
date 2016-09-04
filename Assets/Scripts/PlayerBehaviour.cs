@@ -7,6 +7,7 @@ using System.Collections.Generic;
 public class PlayerBehaviour : MonoBehaviour
 {
     public int health;
+    public int givenDamage;
     [HideInInspector]
     public float speed;
     private Vector2 position;

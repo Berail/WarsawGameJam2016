@@ -149,6 +149,10 @@ public class EnemyController : MonoBehaviour {
             takeDamage(col.GetComponent<FanController>().damageOfFan);
             col.GetComponent<FanController>().TakeDamage(damageToHit);
         }
+        else if(col.tag == "Player")
+        {
+            takeDamage(col.GetComponent<PlayerBehaviour>().givenDamage);
+        }
         
    }
     
