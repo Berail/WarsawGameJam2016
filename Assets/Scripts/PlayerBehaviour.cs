@@ -25,6 +25,7 @@ public class PlayerBehaviour : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        health = 100;
         BoxCollider2D = GetComponents<BoxCollider2D>()[0];
         flockingType = FlockingEnum.No_Flocking;
         speed = 1.0f;
