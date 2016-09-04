@@ -59,11 +59,7 @@ public class PlayerBehaviour : MonoBehaviour
             );
 
         Movement();
-        if (Input.GetKey(KeyCode.Space))
-        {
-            flockingType = FlockingEnum.Line;
-        }
-        Flocking(flockingType);
+      
     }
 
     void Movement()
