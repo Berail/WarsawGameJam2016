@@ -243,15 +243,20 @@ public class PlayerBehaviour : MonoBehaviour
         {
             takeDamage(col.GetComponent<FanController>().damageOfFan);
         }
+        
+
+    }
+
+    void OnTriggerStay2d(Collider2D col)
+    {
         if (fansList.Count == 0 && col.tag == "Enemy")
         {
             takeDamage(col.GetComponent<EnemyController>().damageToHit);
         }
-        if(fansList.Count == 0 && col.transform.parent != null && col.transform.parent.name == "Enemy")
+        if (fansList.Count == 0 && col.transform.parent != null && col.transform.parent.name == "Enemy")
         {
             takeDamage(col.GetComponent<FanController>().damageOfFan);
         }
-
     }
 
     public void sacrificeFan(GameObject fan)

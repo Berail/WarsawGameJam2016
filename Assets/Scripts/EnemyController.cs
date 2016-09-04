@@ -144,18 +144,23 @@ public class EnemyController : MonoBehaviour {
         {
             addFan(col.gameObject);
         }
-        else if(col.tag == "Fan" && col.transform.parent != null && col.transform.parent.name == "Player")
+        
+        
+   }
+    
+    void OnTriggerStay2D(Collider2D col)
+    {
+        if (col.tag == "Fan" && col.transform.parent != null && col.transform.parent.name == "Player")
         {
             takeDamage(col.GetComponent<FanController>().damageOfFan);
             col.GetComponent<FanController>().TakeDamage(damageToHit);
         }
-        else if(col.tag == "Player")
+        else if (col.tag == "Player")
         {
             takeDamage(col.GetComponent<PlayerBehaviour>().givenDamage);
         }
-        
-   }
-    
+    }
+
     void attackPlayer()
     {
         
